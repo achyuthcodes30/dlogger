@@ -2,9 +2,13 @@ version: "3.9"
 
 services:
   elasticsearch:
-    image: elasticsearch:7.17.25
+    image: elasticsearch:7.14.0
+    container_name: elasticsearch
+    restart: always
+    hostname: elasticsearch
     ports:
       - 9200:9200
+      - 9300:9300
     environment:
       discovery.type: 'single-node'
       xpack.security.enabled: 'false'
@@ -19,5 +23,21 @@ services:
       timeout: 10s
       retries: 5
 
+  logstash:
+    container_name: logstash
+    restart: always
+    hostname: logstash
+    image: logstash:7.14.0
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - lsdata:/usr/share/logstash/data
+    depends_on:
+      - elasticsearch
+    ports:
+      - 9600:9600
+      - 7777:7777
+      - 5000:5000
+
 volumes:
   esdata:
+  lsdata:
