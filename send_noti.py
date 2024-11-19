@@ -78,7 +78,7 @@ def monitor_heartbeat():
 
 def consume_messages():
     consumer = KafkaConsumer(
-        'alive',
+        'alive', 'alerting',
         bootstrap_servers=['159.223.32.50:9092'],
         group_id='notification-group',
         auto_offset_reset='earliest'
@@ -108,6 +108,9 @@ def consume_messages():
                     else:
                         logging.warning(f"Received heartbeat for unregistered Node {node_id}.")
 
+            elif topic == 'alerting':
+                print(f"Alerting message received: {message_data}")
+
         except Exception as e:
             logging.error(f"Error processing message: {e}")
 
@@ -119,4 +122,5 @@ if __name__ == "__main__":
 
     # Start consuming messages
     consume_messages()
+
 
