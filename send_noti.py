@@ -36,7 +36,7 @@ def get_users_subscribed_to_topic(topic):
     return [user['email'] for user in users if topic in user['subscriptions']]
 
 consumer = KafkaConsumer(
-    'LOG', 'ERROR', 'DEBUG',
+    'WARN', 'ERROR',
     bootstrap_servers=['localhost:9092'], 
     group_id='notification-group',
     auto_offset_reset='earliest'
@@ -60,4 +60,5 @@ for message in consumer:
                 send_email(user_email, subject, body)
     except Exception as e:
         print(f"Error processing message: {e}")
+
 
