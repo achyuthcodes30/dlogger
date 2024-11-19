@@ -7,6 +7,8 @@ LOGGING_TOPIC = 'logs'
 HEARTBEAT_TOPIC = 'heartbeats'
 NODE_TIMEOUT_SECONDS = 10  # Time in seconds to mark a node as failed
 heartbeats = {}
+
+
 def handle_log_entry(log_entry):
     """
     Handles log entries to identify critical issues (ERROR, WARN).
@@ -26,13 +28,18 @@ def handle_log_entry(log_entry):
             error_info = log_entry.get("error_details", {})
             print(f"  Error Code: {error_info.get('error_code', '')}")
             print(f"  Error Message: {error_info.get('error_message', '')}")
+
+
 def handle_heartbeat(heartbeat):
     """
     Processes heartbeat messages to track the status of nodes.
     """
     node = heartbeat.get("node_id", "Unknown Node")
-    time_received = datetime.strptime(heartbeat.get("timestamp", ""), "%Y-%m-%dT%H:%M:%S")
+    time_received = datetime.strptime(
+        heartbeat.get("timestamp", ""), "%Y-%m-%dT%H:%M:%S")
     heartbeats[node] = time_received
+
+
 def check_for_node_failures():
     """
     Checks for nodes that have failed based on heartbeat timestamps.
@@ -44,6 +51,8 @@ def check_for_node_failures():
             print(f"  Node ID: {node}")
             print(f"  Last Heartbeat Received: {last_seen}")
             del heartbeats[node]  # Remove the node from monitoring
+
+
 def run_alert_system():
     """
     Initializes the alerting system for critical logs and node failure detection.
@@ -62,6 +71,8 @@ def run_alert_system():
                 handle_heartbeat(msg.value)
         # Perform node failure checks in each loop iteration
         check_for_node_failures()
+
+
 if __name__ == "__main__":
     try:
         run_alert_system()
