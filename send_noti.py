@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from kafka import KafkaConsumer
 from collections import defaultdict
 from datetime import datetime, timedelta
-from elasticsearch import ElasticSearch
+
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -73,8 +73,8 @@ async def monitor_heartbeat():
 
 # Kafka Consumer configuration
 consumer = KafkaConsumer(
-    'alive', 'alerting', 'info',
-    bootstrap_servers=['localhost:9092'],
+    'alive', 'alerting',
+    bootstrap_servers=['159.223.32.50:9092'],
     group_id='notification-group',
     auto_offset_reset='earliest'
 )
