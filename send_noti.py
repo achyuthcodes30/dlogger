@@ -47,12 +47,14 @@ heartbeat_data = defaultdict(dict)
 
 
 async def monitor_heartbeat():
+    
     while True:
+print("New monitoring iteration")
         current_time = datetime.utcnow()
         to_alert = []
 
         for node_id, data in list(heartbeat_data.items()):
-            print("New monitoring iteration")
+            
             last_heartbeat_time = data.get("last_heartbeat_time")
             print(f"Last heartbeat time for {node_id} was {last_heartbeat_time}")
             if last_heartbeat_time and (current_time - last_heartbeat_time > timedelta(seconds=30)):
