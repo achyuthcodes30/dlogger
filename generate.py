@@ -3,6 +3,7 @@ import time
 import threading
 import json
 from datetime import datetime
+from elasticsearch import ElasticSearch
 
 class LoggingService:
     def __init__(self):

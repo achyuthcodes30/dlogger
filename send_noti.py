@@ -9,6 +9,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import threading
 import time
+from elasticsearch import ElasticSearch
 
 # Configuration
 config = configparser.ConfigParser()
@@ -65,6 +66,15 @@ def monitor_heartbeat():
                 logging.error(f"No heartbeat time recorded for node {node_id}, skipping check.")
         
         if to_alert:
+            es = Elasticsearch([{'host': '52.183.115.89', 'port': 9200}])
+            if es.ping():
+                es.index(index="registry", body = {
+    "message_type":"REGISTRATION",
+    "node_id": node_id,
+    "service_name": data["service_name"],
+    "status": "DOWN",
+    "timestamp": current_time
+})
             # Send alerts for missing heartbeats
             for node_id, service_name in to_alert:
                 subject = f"ALERT: Heartbeat Failure for {service_name}"
