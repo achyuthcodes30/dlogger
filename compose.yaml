@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.25
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'false'
+      network.host: 0.0.0.0
+      http.port: 9200
+      ELASTIC_PASSWORD: 'elasticsearch'
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  esdata:
