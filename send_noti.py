@@ -8,7 +8,6 @@ from kafka import KafkaConsumer
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-# Configuring email settings
 config = configparser.ConfigParser()
 config.read('config.ini')
 email = config.get('settings', 'email')
@@ -31,9 +30,8 @@ def send_email(recipient, subject, body):
         print(f"Error sending email to {recipient}: {e}")
 
 
-# Example users subscribed to heartbeat failure alerts
 users = [
-    {"email": "shregur@gmail.com", "subscriptions": [NODE_DED"]},
+    {"email": "shregur@gmail.com", "subscriptions": ["NODE_DED"]},
     {"email": "raoanu2004@gmail.com",
         "subscriptions": ["NODE_DED"]},
 ]
@@ -43,7 +41,6 @@ def get_users_subscribed_to_topic(topic):
     return [user['email'] for user in users if topic in user['subscriptions']]
 
 
-# Dictionary to track last heartbeat timestamps
 heartbeat_data = defaultdict(dict)
 
 
@@ -72,7 +69,7 @@ async def monitor_heartbeat():
 
 # Kafka Consumer configuration
 consumer = KafkaConsumer(
-    'alive', 'alerting',
+    'alive', 'alerting', 'info',
     bootstrap_servers=['localhost:9092'],
     group_id='notification-group',
     auto_offset_reset='earliest'
