@@ -62,6 +62,7 @@ async def monitor_heartbeat():
         for node_id, service_name in to_alert:
             subscribed_users = get_users_subscribed_to_topic("NODE_DED")
             subject = f"ALERT: Heartbeat Failure for {service_name}"
+            print(subject)
             body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 30 seconds.\n\nPlease check the service immediately."
             for user_email in subscribed_users:
                 send_email(user_email, subject, body)
