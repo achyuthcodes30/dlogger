@@ -32,7 +32,8 @@ services:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - lsdata:/usr/share/logstash/data
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     ports:
       - 9600:9600
       - 7777:7777
