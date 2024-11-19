@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from kafka import KafkaConsumer
 from collections import defaultdict
 from datetime import datetime, timedelta
+from elasticsearch import ElasticSearch
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -34,6 +35,7 @@ users = [
     {"email": "shregur@gmail.com", "subscriptions": ["NODE_DED"]},
     {"email": "raoanu2004@gmail.com",
         "subscriptions": ["NODE_DED"]},
+        {"email": "achyuthyogesh0@gmail.com", "subscriptions": ["NODE_DED"]}
 ]
 
 
@@ -63,6 +65,8 @@ async def monitor_heartbeat():
             body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 30 seconds.\n\nPlease check the service immediately."
             for user_email in subscribed_users:
                 send_email(user_email, subject, body)
+            ElasticSearch
+            
 
         await asyncio.sleep(5)  # Check for ded nodes every 5 seconds
 
