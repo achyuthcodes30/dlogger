@@ -59,14 +59,14 @@ async def monitor_heartbeat():
                 del heartbeat_data[node_id]  # Remove the node from tracking
 
         # Send alerts for missing heartbeats
-            for node_id, service_name in to_alert:
-             subscribed_users = get_users_subscribed_to_topic("NODE_DED")
-             subject = f"ALERT: Heartbeat Failure for {service_name}"
-             print(subject)
-             to_alert = []
-             body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 30 seconds.\n\nPlease check the service immediately."
-             for user_email in subscribed_users:
-                 send_email(user_email, subject, body)
+                for node_id, service_name in to_alert:
+                  subscribed_users = get_users_subscribed_to_topic("NODE_DED")
+                  subject = f"ALERT: Heartbeat Failure for {service_name}"
+                  print(subject)
+                  to_alert = []
+                  body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 30 seconds.\n\nPlease check the service immediately."
+                  for user_email in subscribed_users:
+                    send_email(user_email, subject, body)
             
 
         await asyncio.sleep(5)  # Check for ded nodes every 5 seconds
