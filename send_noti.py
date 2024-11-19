@@ -49,7 +49,7 @@ heartbeat_data = defaultdict(dict)
 async def monitor_heartbeat():
     
     while True:
-print("New monitoring iteration")
+        print("New monitoring iteration")
         current_time = datetime.utcnow()
         to_alert = []
 
@@ -85,6 +85,19 @@ consumer = KafkaConsumer(
     auto_offset_reset='earliest'
 )
 
+
+
+
+
+async def monitor_service(service_id: str, service_name: str):
+        try:
+            await asyncio.sleep(20)
+            print(f"Service {service_name} ({service_id}) failed - no heartbeat received")
+            # Send alerts here
+            del heartbeat_data[service_id]
+        except asyncio.CancelledError:
+            pass  # Timer reset by new heartbeat
+
 # Start the asyncio loop
 
 
@@ -104,14 +117,17 @@ async def main():
                 if message_type == "REGISTRATION":
                     print(
                         f"Received registration for Node ID: {node_id}, Service: {service_name}")
-                    heartbeat_data[node_id] = {
-                        "last_heartbeat_time": datetime.utcnow(), "service_name": service_name}
+                    heartbeat_data[node_id] = asyncio.create_task(
+            monitor_service(node_id, service_name)
+        )
 
                 elif message_type == "HEARTBEAT":
                     print(f"Received heartbeat for Node ID: {node_id}")
                     if node_id in heartbeat_data:
-                        heartbeat_data[node_id]["last_heartbeat_time"] = datetime.utcnow(
-                        )
+                        heartbeat_data[node_id].cancel()
+                        heartbeat_data[node_id] = asyncio.create_task(
+            monitor_service(node_id, service_name)
+        )
 
             elif topic == 'alerting':
                 print(f"Alerting message received: {message_data}")
