@@ -66,7 +66,6 @@ async def monitor_heartbeat():
             body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 30 seconds.\n\nPlease check the service immediately."
             for user_email in subscribed_users:
                 send_email(user_email, subject, body)
-            ElasticSearch
             
 
         await asyncio.sleep(5)  # Check for ded nodes every 5 seconds
