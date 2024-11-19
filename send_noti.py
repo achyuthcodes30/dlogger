@@ -90,6 +90,7 @@ consumer = KafkaConsumer(
 
 
 async def monitor_service(service_id: str, service_name: str):
+        print(f"Monitoring {service_id}")
         try:
             await asyncio.sleep(20)
             print(f"Service {service_name} ({service_id}) failed - no heartbeat received")
@@ -102,7 +103,7 @@ async def monitor_service(service_id: str, service_name: str):
 
 
 async def main():
-    asyncio.create_task(monitor_heartbeat())
+   # asyncio.create_task(monitor_heartbeat())
 
     for message in consumer:
         try:
@@ -124,6 +125,7 @@ async def main():
                 elif message_type == "HEARTBEAT":
                     print(f"Received heartbeat for Node ID: {node_id}")
                     if node_id in heartbeat_data:
+                        print("Cancelling monitor")
                         heartbeat_data[node_id].cancel()
                         heartbeat_data[node_id] = asyncio.create_task(
             monitor_service(node_id, service_name)
