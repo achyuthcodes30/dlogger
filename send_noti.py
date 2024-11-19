@@ -9,24 +9,20 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import threading
 import time
-from elasticsearch import ElasticSearch
+from elasticsearch import Elasticsearch
 
-# Configuration
 config = configparser.ConfigParser()
 config.read('config.ini')
 email = config.get('settings', 'email')
 password = config.get('settings', 'password')
 
-# Set up logging
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
-    level=logging.INFO  # Changed to INFO to avoid debug level logs
+    level=logging.INFO 
 )
 
-# This will be used for storing node heartbeat information
 heartbeat_data = defaultdict(dict)
 
-# Example users list with subscriptions
 users = [
     {"email": "shregur@gmail.com", "subscriptions": ["NODE_DED"]},
     {"email": "raoanu2004@gmail.com", "subscriptions": ["NODE_DED"]},
@@ -75,7 +71,6 @@ def monitor_heartbeat():
     "status": "DOWN",
     "timestamp": current_time
 })
-            # Send alerts for missing heartbeats
             for node_id, service_name in to_alert:
                 subject = f"ALERT: Heartbeat Failure for {service_name}"
                 body = f"Dear User,\n\nNo heartbeat received for service '{service_name}' with Node ID '{node_id}' within the last 20 seconds.\n\nPlease check the service immediately."
@@ -83,7 +78,6 @@ def monitor_heartbeat():
                 for user_email in subscribed_users:
                     send_email(user_email, subject, body)
 
-        # Sleep for 2 seconds before checking again
         time.sleep(2)
 
 def consume_messages():
@@ -125,12 +119,10 @@ def consume_messages():
             logging.error(f"Error processing message: {e}")
 
 if __name__ == "__main__":
-    # Start the heartbeat monitor in a separate thread
     monitor_thread = threading.Thread(target=monitor_heartbeat)
     monitor_thread.daemon = True
     monitor_thread.start()
 
-    # Start consuming messages
     consume_messages()
 
 
