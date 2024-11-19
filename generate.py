@@ -6,7 +6,7 @@ from datetime import datetime
 
 class LoggingService:
     def __init__(self):
-        self.node_id = f"1"
+        self.node_id = "1" 
         self.service_name = random.choice(["PaymentService", "OrderService", "UserService"])
         self.last_heartbeat = time.time()
         self.log_file = "logs.log" 
@@ -25,11 +25,19 @@ class LoggingService:
         return random.choice(list(messages.values()))
 
     def generate_heartbeat(self):
-        status = "UP" if self.last_heartbeat + 10 < time.time() else "DOWN"
+        status = "UP" if self.last_heartbeat + 15 > time.time() else "DOWN"
         return {
             "node_id": self.node_id,
             "message_type": "HEARTBEAT",
             "status": status,
+            "timestamp": datetime.now().isoformat()
+        }
+
+    def generate_registration_message(self):
+        return {
+            "node_id": self.node_id,
+            "message_type": "REGISTRATION",
+            "service_name": self.service_name,
             "timestamp": datetime.now().isoformat()
         }
 
@@ -43,15 +51,19 @@ class LoggingService:
             "service_name": self.service_name,
             "timestamp": datetime.now().isoformat()
         }
-        # print(json.dumps(log))
         with self.lock:
             with open(self.log_file, "a") as log_file:
                 log_file.write(json.dumps(log) + "\n")
 
+    def send_registration(self):
+        registration_message = self.generate_registration_message()
+        with self.lock:
+            with open(self.log_file, "a") as log_file:
+                log_file.write(json.dumps(registration_message) + "\n")
+
     def start_heartbeat(self):
         while True:
             heartbeat = self.generate_heartbeat()
-            # print(json.dumps(heartbeat))
             with self.lock:
                 with open(self.log_file, "a") as log_file:
                     log_file.write(json.dumps(heartbeat) + "\n")
@@ -68,13 +80,15 @@ class LoggingService:
 def main():
     logging_service = LoggingService()
 
+    logging_service.send_registration()
+    print(f"Node {logging_service.node_id} registered with service {logging_service.service_name}")
+
     heartbeat_thread = threading.Thread(target=logging_service.start_heartbeat)
     heartbeat_thread.daemon = True 
     heartbeat_thread.start()
 
     try:
         logging_service.simulate_logging()
-
     except KeyboardInterrupt:
         print("\nLogging service stopped by user.")
     finally:
@@ -82,4 +96,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
