@@ -1,6 +1,7 @@
 # DLogger
 
 Topic based, distributed log ingestion and retrieval with email alerts and failure detection.
+Built as a project under PES University's Big Data course along with [Anurag Rao](https://github.com/anuragrao04) and [Shreya Gurram](https://github.com/bun137).
 
 # Components
 
